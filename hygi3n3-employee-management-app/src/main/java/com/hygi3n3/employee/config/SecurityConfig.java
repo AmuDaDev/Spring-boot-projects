@@ -22,8 +22,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// use jdbc authentication ... oh yeah!!!
+		// use jdbc authentication
 		auth.jdbcAuthentication().dataSource(securityDataSource);
+
+		// use in memory authentication
+		/** UserBuilder users = User.withDefaultPasswordEncoder();
+
+		auth.inMemoryAuthentication()
+				.withUser(users.username("john").password("test123").roles("EMPLOYEE"))
+				.withUser(users.username("mary").password("test123").roles("EMPLOYEE", "MANAGER"))
+				.withUser(users.username("susan").password("test123").roles("EMPLOYEE", "ADMIN")); **/
 	}
 
 	@Override
@@ -34,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/employees/delete").hasRole("ADMIN")
 			.antMatchers("/employees/**").hasRole("EMPLOYEE")
 			.antMatchers("/resources/**").permitAll()
-			.antMatchers("/h2-console/**").permitAll() //Allow all requests to the H2 database console url
+			//.antMatchers("/h2-console/**").permitAll() //Allow all requests to the H2 database console url
 			.and()
 			.formLogin()
 				.loginPage("/showMyLoginPage")
@@ -44,8 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout().permitAll()
 			.and()
 			.exceptionHandling().accessDeniedPage("/access-denied");
-		http.csrf().disable(); //Disable CSRF protection for H2
-		http.headers().frameOptions().disable(); //Disable X-Frame-Options for H2
+		//http.csrf().disable(); //Disable CSRF protection for H2
+		//http.headers().frameOptions().disable(); //Disable X-Frame-Options for H2
 	}
 		
 }

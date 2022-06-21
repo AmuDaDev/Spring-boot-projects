@@ -11,6 +11,8 @@ public class AmuMyblogAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AmuMyblogAppApplication.class, args);
 	}
+
+	//Bean for ModelMapper to map entity to DTOs and vice versa
 	@Bean
 	public ModelMapper modelMapper(){
 		return new ModelMapper();

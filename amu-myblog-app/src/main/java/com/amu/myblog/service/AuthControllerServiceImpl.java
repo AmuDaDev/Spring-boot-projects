@@ -7,6 +7,7 @@ import com.amu.myblog.payload.LoginDto;
 import com.amu.myblog.payload.SignUpDto;
 import com.amu.myblog.repository.RoleRepository;
 import com.amu.myblog.repository.UserRepository;
+import com.amu.myblog.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,20 +30,25 @@ public class AuthControllerServiceImpl implements AuthControllerService{
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider tokenProvider;
 
-    public AuthControllerServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, AuthenticationManager authenticationManager) {
+
+    public AuthControllerServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
     public String signIn(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(),loginDto.getPassword()));
+                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "Successful logged in!";
+
+        // get token form tokenProvider
+        return tokenProvider.generateToken(authentication);
     }
 
     @Override

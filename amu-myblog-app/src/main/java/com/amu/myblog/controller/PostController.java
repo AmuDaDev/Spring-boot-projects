@@ -3,6 +3,8 @@ package com.amu.myblog.controller;
 import com.amu.myblog.payload.PostDto;
 import com.amu.myblog.service.PostService;
 import com.amu.myblog.utils.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +17,7 @@ import java.util.List;
  * @Created 2022/06/18
  * @Author Amu
  */
+@Api(value = "CRUD APIs for Post resources")
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -24,6 +27,7 @@ public class PostController {
         this.postService = postService;
     }
 
+    @ApiOperation(value = "API to Create Post")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto){
@@ -31,6 +35,7 @@ public class PostController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "API to Retrieve all Posts")
     @GetMapping
     public ResponseEntity<List<PostDto>> retrieveAllPosts(
             @RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
@@ -42,17 +47,20 @@ public class PostController {
         return ResponseEntity.ok(postDtoList);
     }
 
+    @ApiOperation(value = "API to Retrieve Post by id")
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> retrievePostById(@PathVariable(name = "id") Long id){
         return ResponseEntity.ok(postService.retrievePostById(id));
     }
 
+    @ApiOperation(value = "API to Update Post")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.updatePost(postDto,id));
     }
 
+    @ApiOperation(value = "API to Delete Post")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable(name = "id") Long id){
